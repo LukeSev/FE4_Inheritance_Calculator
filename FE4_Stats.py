@@ -54,6 +54,43 @@ class_bases = {
     "Dragon Knight":    Stats("", "Class", 40, 10, 0, 7, 6, 0, 11, 0)
 }
 
+max_stats = {
+    "Junior Lord":      Stats("Max", "Class", 80, 20, 15, 20, 20, 30, 20, 15),
+    "Lord Knight":      Stats("Max", "Class", 80, 25, 15, 22, 22, 30, 22, 18),
+    "Sword Armour":     Stats("Max", "Class", 80, 24, 15, 20, 18, 30, 25, 15),
+    "General":          Stats("Max", "Class", 80, 25, 15, 21, 20, 30, 27, 18),
+    "Troubadour":       Stats("Max", "Class", 80, 18, 18, 21, 21, 30, 18, 18),
+    "Cavalier":         Stats("Max", "Class", 80, 22, 15, 21, 21, 30, 21, 15),
+    "Paladin":          Stats("Max", "Class", 80, 24, 20, 24, 24, 30, 24, 20),
+    "Duke Knight":      Stats("Max", "Class", 80, 27, 15, 22, 22, 30, 23, 18),
+    "Bow Knight":       Stats("Max", "Class", 80, 25, 15, 23, 23, 30, 23, 18),
+    "Great Knight":     Stats("Max", "Class", 80, 27, 15, 22, 22, 30, 25, 18),
+    "Forrest Knight":   Stats("Max", "Class", 80, 23, 15, 30, 27, 30, 23, 18),
+    "Mage":             Stats("Max", "Class", 80, 15, 22, 21, 21, 30, 16, 20),
+    "Mage Knight":      Stats("Max", "Class", 80, 20, 25, 22, 22, 30, 20, 22),
+    "Priest":           Stats("Max", "Class", 80, 15, 22, 21, 21, 30, 16, 22),
+    "High Priest":      Stats("Max", "Class", 80, 15, 27, 24, 23, 30, 18, 23),
+    "Thief":            Stats("Max", "Class", 80, 18, 15, 18, 22, 30, 16, 15),
+    "Thief Figher":     Stats("Max", "Class", 80, 22, 18, 22, 27, 30, 20, 18),
+    "Swordfighter":     Stats("Max", "Class", 80, 22, 15, 25, 25, 30, 20, 15),
+    "Swordmaster":      Stats("Max", "Class", 80, 27, 15, 30, 30, 30, 22, 18),
+    "Forrest":          Stats("Max", "Class", 80, 27, 18, 27, 27, 30, 22, 18),
+    "Shaman":           Stats("Max", "Class", 80, 15, 23, 22, 22, 30, 18, 25),
+    "Bow Fighter":      Stats("Max", "Class", 80, 22, 15, 25, 25, 30, 20, 15),
+    "Sniper":           Stats("Max", "Class", 80, 27, 15, 27, 27, 30, 22, 18),
+    "Prince":           Stats("Max", "Class", 80, 23, 18, 22, 21, 30, 22, 18),
+    "Princess":         Stats("Max", "Class", 80, 20, 22, 20, 23, 30, 20, 22),
+    "Master Knight":    Stats("Max", "Class", 80, 27, 22, 27, 27, 30, 27, 22),
+    "Bard":             Stats("Max", "Class", 80, 15, 22, 22, 25, 30, 18, 22),
+    "Sage":             Stats("Max", "Class", 80, 15, 30, 27, 30, 30, 18, 27),
+    "Dancer":           Stats("Max", "Class", 80, 18, 15, 16, 22, 30, 16, 18),
+    "Pegasus Knight":   Stats("Max", "Class", 80, 22, 15, 22, 27, 30, 20, 22),
+    "Falcon Knight":    Stats("Max", "Class", 80, 22, 22, 25, 30, 30, 21, 27),
+    "Thunder Mage":     Stats("Max", "Class", 80, 15, 22, 24, 21, 30, 16, 20),
+    "Mage Fighter (F)": Stats("Max", "Class", 80, 18, 27, 24, 27, 30, 20, 25),
+    "Dragon Knight":    Stats("Max", "Class", 80, 25, 15, 22, 21, 30, 26, 15)
+}
+
 # Note: Character classes stored in as tuple (unpromoted, promoted)
 #       If promotion unavailable, or unit comes pre-promoted, both will be the same for simplicity
 unit_classes = {
@@ -99,6 +136,44 @@ unit_classes = {
     "Leen":     ("Dancer", "Dancer"),
     "Arthur":   ("Mage", "Mage Knight"),
     "Tinny":    ("Mage", "Mage Fighter (F)")
+}
+
+# Mothers who reverse the main parent/secondary parent roles in calculations
+main_mothers = [
+    "Ethlin",
+    "Briggid"
+]
+
+children = {
+    "Deirdre":  ["Seliph", ""],
+    "Ethlin":   ["Leif", "Altenna"],
+    "Adeen":    ["Lester", "Lana"],
+    "Ayra":     ["Ulster", "Larcei"],
+    "Lachesis": ["Dermott", "Nanna"],
+    "Sylvia":   ["Corpul", "Leen"],
+    "Erinys":   ["Ced", "Fee"],
+    "Briggid":  ["Faval", "Patty"],
+    "Tiltyu":   ["Arthur", "Tinny"]
+}
+
+starting_levels = {
+    "Seliph":   1,
+    "Lana":     1,
+    "Lester":   1,
+    "Ulster":   1,
+    "Larcei":   1,
+    "Dermott":  3,
+    "Nanna":    3,
+    "Ced":      14,
+    "Fee":      2,
+    "Leif":     1,
+    "Altenna":  17,
+    "Patty":    1,
+    "Faval":    9,
+    "Corpul":   1,
+    "Leen":     3,
+    "Arthur":   2,
+    "Tinny":    3
 }
 
 # Note: Growth Rates for each Father
@@ -322,24 +397,4 @@ unit_growths = {
         "Lewyn": Stats("", "Growths", 1.05, 0.15, 0.35, 0.80, 0.85, 0.60, 0.20, 0.15),
         "Lex": Stats("", "Growths", 1.15, 0.30, 0.22, 0.70, 0.50, 0.60, 0.50, 0.12)
         },
-}
-
-starting_levels = {
-    "Seliph":   1,
-    "Lana":     1,
-    "Lester":   1,
-    "Ulster":   1,
-    "Larcei":   1,
-    "Dermott":  3,
-    "Nanna":    3,
-    "Ced":      14,
-    "Fee":      2,
-    "Leif":     1,
-    "Altenna":  17,
-    "Patty":    1,
-    "Faval":    9,
-    "Corpul":   1,
-    "Leen":     3,
-    "Arthur":   2,
-    "Tinny":    3
 }

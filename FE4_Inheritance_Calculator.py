@@ -13,7 +13,7 @@ def test():
     second_parent = Stats("Deirdre", "Parent", 15, 5, 30, 15, 15, 5, 5, 30)
     second_lvl = 30
 
-    child = calc_Start_Stats(main_parent, 1, second_parent, 0, "Seliph", "Sigurd")
+    child = calc_start_stats(main_parent, 1, second_parent, 0, "Seliph", "Sigurd")
 
     child.print_stats()
 
