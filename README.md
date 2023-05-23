@@ -14,7 +14,8 @@ While there already exist online resources to give you the growth rates and expe
 
 # Installation #
 Option 1: Run from exe
-- Download FE4_Inheritance_Calculator.zip
+- Navigate to the "Releases" directory
+- Pick a version and download the corresponding zip
 - Unzip and navigate to new directory
 - Run FE4_Inheritance_Calculator.exe  
 
