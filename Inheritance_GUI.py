@@ -1,53 +1,4 @@
-from PyQt6.QtWidgets import (
-    QApplication, 
-    QLabel, 
-    QMessageBox,
-    QWidget,
-    QMainWindow, 
-    QGridLayout, 
-    QHBoxLayout,
-    QVBoxLayout,
-    QFormLayout,
-    QLineEdit,
-    QVBoxLayout,
-    QPushButton,
-    QComboBox
-)
-from PyQt6 import (
-    QtGui, 
-    QtWidgets
-)
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
-import sys
-from Stat_Calculations import *
-
-# Window Dimensions
-WIDTH   =   800
-HEIGHT  =   600
-
-# Alignment flags
-LEFT    =   Qt.AlignmentFlag.AlignLeft
-CENTER  =   Qt.AlignmentFlag.AlignCenter
-RIGHT   =   Qt.AlignmentFlag.AlignRight
-
-# Colors for various buttons/fields
-LTBLUE  =   "#b8e0f5"
-LTTAN   =   "#faf2cd"
-
-# For indexing into arrays
-MOTHER  =   0
-FATHER  =   1
-
-LEVEL   =   0
-PROMO   =   0
-STATS   =   1
-
-SON     =   0
-DGHTR   =   1
-
-PARENT_ERROR = "ERROR: Invalid Parent Combination"
-STAT_ERROR = "ERROR: Invalid Stat Selection(s)"
+from GUI_source import *
 
 class StatForm():
     def __init__(self, Name, Type):
@@ -69,13 +20,46 @@ class Results_Window(QWidget):
         self.setWindowTitle('Results')
         self.setFixedSize(int(0.6*WIDTH), int(0.6*HEIGHT))
         if(daughter == None):
-            self.setFixedSize(int(0.4*WIDTH), int(0.6*HEIGHT))
+            self.setFixedSize(int(0.3*WIDTH), int(0.6*HEIGHT))
         layout = QHBoxLayout()
         son_results = create_child_display(self, son, father)
-        layout.addLayout(son_results)
+        layout.addLayout(son_results, 10)
         if(daughter != None):
+            layout.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
             daughter_results = create_child_display(self, daughter, father)
-            layout.addLayout(daughter_results)
+            layout.addLayout(daughter_results, 10)
+        self.setLayout(layout)
+
+class Stats_Window(QWidget):
+    def __init__(self, father, son, daughter):
+        super().__init__()
+        self.setWindowTitle('Stats')
+        self.setFixedSize(int(0.5*WIDTH), int(0.6*HEIGHT))
+        if(daughter == None):
+            self.setFixedSize(int(0.25*WIDTH), int(0.6*HEIGHT))
+        layout = QHBoxLayout()
+        son_results = create_child_stat_display(self, son, father)
+        layout.addLayout(son_results, 10)
+        if(daughter != None):
+            layout.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
+            daughter_results = create_child_stat_display(self, daughter, father)
+            layout.addLayout(daughter_results, 10)
+        self.setLayout(layout)
+
+class Growths_Window(QWidget):
+    def __init__(self, father, son, daughter):
+        super().__init__()
+        self.setWindowTitle('Stats')
+        self.setFixedSize(int(0.5*WIDTH), int(0.6*HEIGHT))
+        if(daughter == None):
+            self.setFixedSize(int(0.25*WIDTH), int(0.6*HEIGHT))
+        layout = QHBoxLayout()
+        son_results = create_child_growths_display(self, son, father)
+        layout.addLayout(son_results, 10)
+        if(daughter != None):
+            layout.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
+            daughter_results = create_child_growths_display(self, daughter, father)
+            layout.addLayout(daughter_results, 10)
         self.setLayout(layout)
 
 class FE4_Calc(QMainWindow):
@@ -85,6 +69,7 @@ class FE4_Calc(QMainWindow):
         self.initUI()
 
     def initUI(self):
+        # Initialize window and basic layout
         self.setWindowTitle('FE4 Inheritance Calculator')
         self.setFixedSize(WIDTH, HEIGHT)
         self.generalLayout = QVBoxLayout()
@@ -97,12 +82,31 @@ class FE4_Calc(QMainWindow):
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.generalLayout.addWidget(logo)
 
+        self.motherImg = create_image(self, DFLT_MOM_IMG, IMG_WIDTH, IMG_HEIGHT)
+        self.fatherImg = create_image(self, DFLT_DAD_IMG, IMG_WIDTH, IMG_HEIGHT)
+
+        # self.generalLayout.addWidget(horizontal_separator(LINE_WIDTH, getColor(SEP_COL)))
+
+        # Stat forms
         self.forms = [StatForm("Mother", "Parent"), StatForm("Father", "Parent")]
         self.create_forms()
-        startBtn = QPushButton("start!")
-        startBtn.setStyleSheet("background-color:{}".format(LTBLUE))
-        startBtn.clicked.connect(self.calculate_children_stats)
-        self.generalLayout.addWidget(startBtn)
+
+        # Buttons for each mode
+        soloBtns = QHBoxLayout()
+        statBtn = QPushButton("just stats")
+        statBtn.setStyleSheet("background-color:{}".format(LTBLUE))
+        statBtn.clicked.connect(self.calculate_children_stats)
+        soloBtns.addWidget(statBtn)
+        growthsBtn = QPushButton("just growths")
+        growthsBtn.setStyleSheet("background-color:{}".format(LTBLUE))
+        growthsBtn.clicked.connect(self.calculate_children_growths)
+        soloBtns.addWidget(growthsBtn)
+        self.generalLayout.addLayout(soloBtns)
+
+        bothBtn = QPushButton("stats and growths")
+        bothBtn.setStyleSheet("background-color:{}".format(LTBLUE))
+        bothBtn.clicked.connect(self.calculate_children_stats_growths)
+        self.generalLayout.addWidget(bothBtn)
         
         self.center()
         self.show()
@@ -120,18 +124,27 @@ class FE4_Calc(QMainWindow):
 
     def create_stat_form(self, title):
         statForm = QVBoxLayout()
+        # Add Label for parent ("Mother" or "Father")
+        label = QLabel(self)
+        label.setText(title)
+        label.setFont(QFont('Helvetica', TITLE_SIZE))
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Create Corresponding Dropdown
         if(title == "Mother"):
+            statForm.addWidget(self.motherImg)
+            statForm.addWidget(label)
             self.motherDropdown = self.create_mother_dropdown()
             statForm.addWidget(self.motherDropdown)
             form = MOTHER
         else:
+            statForm.addWidget(self.fatherImg)
+            statForm.addWidget(label)
             self.fatherDropdown = self.create_father_dropdown()
             statForm.addWidget(self.fatherDropdown)
             form = FATHER
-        label = QLabel(self)
-        label.setText(title)
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        statForm.addWidget(label)
+
+        # Create form form parent stats
         formLayout = QFormLayout()
         formLayout.addRow("Lvl:", self.forms[form].Lvl)
         formLayout.addRow("HP: ", self.forms[form].HP)
@@ -142,12 +155,20 @@ class FE4_Calc(QMainWindow):
         formLayout.addRow("Lck:", self.forms[form].Lck)
         formLayout.addRow("Def:", self.forms[form].Def)
         formLayout.addRow("Mdf:", self.forms[form].Mdf)
+        # formLayout.addRow(create_label("Lvl:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Lvl)
+        # formLayout.addRow(create_label("HP:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].HP)
+        # formLayout.addRow(create_label("Str:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Str)
+        # formLayout.addRow(create_label("Mag:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Mag)
+        # formLayout.addRow(create_label("Skl:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Skl)
+        # formLayout.addRow(create_label("Spd:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Spd)
+        # formLayout.addRow(create_label("Lck:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Lck)
+        # formLayout.addRow(create_label("Def:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Def)
+        # formLayout.addRow(create_label("Mdf:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Mdf)
         statForm.addLayout(formLayout)
         return statForm
 
     def create_mother_dropdown(self):
         motherDropdown = QComboBox()
-        motherDropdown.addItem("<Select Mother>")
         motherDropdown.addItem("Adeen")
         motherDropdown.addItem("Ayra")
         motherDropdown.addItem("Briggid")
@@ -157,11 +178,12 @@ class FE4_Calc(QMainWindow):
         motherDropdown.addItem("Lachesis")
         motherDropdown.addItem("Sylvia")
         motherDropdown.addItem("Tiltyu")
+        motherDropdown.setCurrentIndex(3)
+        motherDropdown.currentTextChanged.connect(self.update_parent_imgs)
         return motherDropdown
 
     def create_father_dropdown(self):
         fatherDropdown = QComboBox()
-        fatherDropdown.addItem("<Select Father>")
         fatherDropdown.addItem("Alec")
         fatherDropdown.addItem("Arden")
         fatherDropdown.addItem("Azel")
@@ -177,6 +199,8 @@ class FE4_Calc(QMainWindow):
         fatherDropdown.addItem("Noish")
         fatherDropdown.addItem("Quan")
         fatherDropdown.addItem("Sigurd")
+        fatherDropdown.setCurrentIndex(14)
+        fatherDropdown.currentTextChanged.connect(self.update_parent_imgs)
         return fatherDropdown
 
     def create_forms(self):
@@ -184,6 +208,7 @@ class FE4_Calc(QMainWindow):
         self.motherForm = self.create_stat_form("Mother")
         self.fatherForm = self.create_stat_form("Father")
         formsLayout.addLayout(self.motherForm)
+        formsLayout.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)))
         formsLayout.addLayout(self.fatherForm)
         self.generalLayout.addLayout(formsLayout)
 
@@ -208,7 +233,13 @@ class FE4_Calc(QMainWindow):
         )
         return (int(form.Lvl.text()), stats)
 
-    def calculate_children_stats(self):
+    # Update image of parent when you select new dropdown option
+    def update_parent_imgs(self):
+        self.motherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.motherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+        self.fatherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.fatherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+
+    # Action that occurs in response to pressing "Calculate stats and growths"
+    def display_results(self, mode):
         # Generate stats from forms
         try:
             mother_info = self.generate_stats(self.forms[MOTHER], MOTHER)
@@ -223,7 +254,6 @@ class FE4_Calc(QMainWindow):
         else:
             mother_promoted = 0
 
-        
         father_stats = father_info[STATS]
         if(father_info[LEVEL] >= 20):
             father_promoted = 1
@@ -231,76 +261,186 @@ class FE4_Calc(QMainWindow):
             father_promoted = 0
 
         # Check for invalid pairings
-        if(
-            (mother_stats.Name == "Ethlin" and father_stats.Name != "Quan")     or
+        if( (mother_stats.Name == "Ethlin" and father_stats.Name != "Quan")     or
             (father_stats.Name == "Quan" and mother_stats.Name != "Ethlin")     or
             (mother_stats.Name == "Deirdre" and father_stats.Name != "Sigurd")  or
             (father_stats.Name == "Sigurd" and mother_stats.Name != "Deirdre")  ):  
                 self.display_error_msg(PARENT_ERROR)
                 return -1
 
-        # Check for valid stat fields
-        if(
-            check_valid_stats(mother_stats, max_stats[unit_classes[mother_stats.Name][mother_promoted]]) == -1   or
-            check_valid_stats(father_stats, max_stats[unit_classes[father_stats.Name][father_promoted]]) == -1   ):
-                self.display_error_msg(STAT_ERROR)
-                return -1
+        # Check for valid stat fields if necessary
+        if(mode != MODE_GROWTHS):
+            if( check_valid_stats(mother_stats, max_stats[unit_classes[mother_stats.Name][mother_promoted]]) == -1   or
+                check_valid_stats(father_stats, max_stats[unit_classes[father_stats.Name][father_promoted]]) == -1   ):
+                    self.display_error_msg(STAT_ERROR)
+                    return -1
 
-        # Account for the mothers that reverse inheritance role
-        if mother_stats.Name in main_mothers:
-            son_parent = [mother_promoted, mother_stats]
-            daughter_parent = [father_promoted, father_stats]
-        else:
-            son_parent = [father_promoted, father_stats]
-            daughter_parent = [mother_promoted, mother_stats]
+            # Account for the mothers that reverse inheritance role
+            if mother_stats.Name in main_mothers:
+                son_parent = [mother_promoted, mother_stats]
+                daughter_parent = [father_promoted, father_stats]
+            else:
+                son_parent = [father_promoted, father_stats]
+                daughter_parent = [mother_promoted, mother_stats]
         
-        # Calculate stats for both children, excluding Sigurd
-        son = calc_start_stats(son_parent[STATS], son_parent[PROMO], daughter_parent[STATS], daughter_parent[PROMO], children[mother_stats.Name][SON], father_stats.Name)
-        if(father_stats.Name == "Sigurd"): 
-            daughter = None
-        else: 
-            daughter = calc_start_stats(daughter_parent[STATS], daughter_parent[PROMO], son_parent[STATS], son_parent[PROMO], children[mother_stats.Name][DGHTR], father_stats.Name)
+            # Calculate stats for both children, excluding Sigurd
+            son = calc_start_stats(son_parent[STATS], son_parent[PROMO], daughter_parent[STATS], daughter_parent[PROMO], children[mother_stats.Name][SON], father_stats.Name)
+            if(father_stats.Name == "Sigurd"): 
+                daughter = None
+            else: 
+                daughter = calc_start_stats(daughter_parent[STATS], daughter_parent[PROMO], son_parent[STATS], son_parent[PROMO], children[mother_stats.Name][DGHTR], father_stats.Name)
+            
+            if(mode == MODE_BOTH):
+                self.results = Results_Window(father_stats.Name, son, daughter)
+            elif(mode == MODE_STATS):
+                self.results = Stats_Window(father_stats.Name, son, daughter)
+        else:   # Growths
+            if(father_stats.Name == "Sigurd"):
+                daughter = None
+            else:
+                daughter = children[mother_stats.Name][DGHTR]
+            self.results = Growths_Window(father_stats.Name, children[mother_stats.Name][SON], daughter)
 
         # Display results
-        # if self.results is None:
-        self.results = Results_Window(father_stats.Name, son, daughter)
         self.results.show()
         return 0
+    
+    def calculate_children_stats_growths(self):
+        self.display_results(MODE_BOTH)
 
-def create_label(text, alignment):
-        label = QLabel()
-        label.setText(text)
-        label.setAlignment(alignment)
-        return label
+    def calculate_children_stats(self):
+        self.display_results(MODE_STATS)
+    
+    def calculate_children_growths(self):
+        self.display_results(MODE_GROWTHS)
+
+def create_label(text, alignment, font, size):
+    label = QLabel()
+    label.setText(text)
+    label.setFont(QFont(font, size))
+    label.setAlignment(alignment)
+    return label
 
 def create_stat_display(self, stats, label):
     # Create stat display (list of all starting stats)
     stat_display = QVBoxLayout()
-    stat_display.addWidget(create_label(label, LEFT))
-    stat_display.addWidget(create_label("HP:  {}".format(str(stats.HP)), LEFT))
-    stat_display.addWidget(create_label("Str: {}".format(str(stats.Str)), LEFT))
-    stat_display.addWidget(create_label("Mag: {}".format(str(stats.Mag)), LEFT))
-    stat_display.addWidget(create_label("Skl: {}".format(str(stats.Skl)), LEFT))
-    stat_display.addWidget(create_label("Spd: {}".format(str(stats.Spd)), LEFT))
-    stat_display.addWidget(create_label("Lck: {}".format(str(stats.Lck)), LEFT))
-    stat_display.addWidget(create_label("Def: {}".format(str(stats.Def)), LEFT))
-    stat_display.addWidget(create_label("Mdf: {}".format(str(stats.Mdf)), LEFT))
+    stat_display.addWidget(create_label(label, CENTER, TITLE_FONT, HEADING_SZ))
+    columns = QHBoxLayout()
+
+    # Create label for each stat (first column)
+    lbl_display = QVBoxLayout()
+    lbl_display.addWidget(create_label("HP: ", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Str:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Mag:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Skl:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Spd:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Lck:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Def:", LEFT, LBL_FONT, LBL_SIZE))
+    lbl_display.addWidget(create_label("Mdf:", LEFT, LBL_FONT, LBL_SIZE))
+
+    # Create corresponding value for each stat (second column)
+    val_display = QVBoxLayout()
+    val_display.addWidget(create_label(str(stats.HP), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Str), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Mag), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Skl), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Spd), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Lck), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Def), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str(stats.Mdf), RIGHT, LBL_FONT, LBL_SIZE))
+    
+    # Add both columns to display
+    columns.addLayout(lbl_display)
+    columns.addLayout(val_display)
+    stat_display.addLayout(columns)
+
     return stat_display
+
+def create_image(self, img_filename, width, height):
+    portrait = QLabel(self)
+    portrait.setPixmap(QPixmap(img_filename).scaled(width, height, Qt.AspectRatioMode.KeepAspectRatio))
+    portrait.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    return portrait
 
 # Create stat display for child's starting stats/growths
 def create_child_display(self, stats, father):
-        child_display = QVBoxLayout()
+    child_display = QVBoxLayout()
 
-        # Add portrait Icon and Name of Child
-        portrait = QLabel(self)
-        portrait.setPixmap(QPixmap('Portraits/{}.png'.format(stats.Name)).scaled(int(0.4*WIDTH), int(0.2*HEIGHT), Qt.AspectRatioMode.KeepAspectRatio))
-        portrait.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        child_display.addWidget(portrait)
-        child_display.addWidget(create_label(str(stats.Name), CENTER))
-        
-        # Add stats and growths columns
-        stats_and_growths = QHBoxLayout()
-        stats_and_growths.addLayout(create_stat_display(self, stats, "Stats"))
-        stats_and_growths.addLayout(create_stat_display(self, unit_growths[stats.Name][father], "Growths"))
-        child_display.addLayout(stats_and_growths)
-        return child_display
+    # Add portrait Icon and Name of Child
+    
+    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_label(str(stats.Name), CENTER, TITLE_FONT, TITLE_SIZE))
+    
+    # Add stats and growths columns
+    stats_and_growths = QHBoxLayout()
+    stats_and_growths.addLayout(create_stat_display(self, stats, "Stats"), 10)
+    stats_and_growths.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
+    stats_and_growths.addLayout(create_stat_display(self, convert_growths(unit_growths[stats.Name][father]), "Growths"), 10)
+    child_display.addLayout(stats_and_growths)
+    return child_display
+
+def create_child_stat_display(self, stats, father):
+    child_display = QVBoxLayout()
+
+    # Add portrait Icon and Name of Child
+    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_label(str(stats.Name), CENTER, TITLE_FONT, TITLE_SIZE))
+    
+    # Add stats and growths columns
+    stats_display = create_stat_display(self, stats, "Stats")
+    child_display.addLayout(stats_display)
+    return child_display
+
+def create_child_growths_display(self, child, father):
+    child_display = QVBoxLayout()
+
+    # Add portrait Icon and Name of Child
+    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(child), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_label(child, CENTER, TITLE_FONT, TITLE_SIZE))
+    
+    # Add stats and growths columns
+    growths_display = create_stat_display(self, convert_growths(unit_growths[child][father]), "Growths")
+    child_display.addLayout(growths_display)
+    return child_display
+
+def horizontal_separator(width, color):
+    separator = QFrame()
+    separator.setFrameShape(QFrame.Shape.HLine)
+    separator.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+    separator.setLineWidth(width)
+    palette = separator.palette()
+    palette.setColor(palette.ColorRole.Window, color)
+    separator.setPalette(palette)
+    return separator
+    
+def vertical_separator(width, color):
+    separator = QFrame()
+    separator.setFrameShape(QFrame.Shape.VLine)
+    separator.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+    separator.setLineWidth(width)
+    palette = separator.palette()
+    palette.setColor(palette.ColorRole.Window, color)
+    separator.setPalette(palette)
+    return separator
+
+def getColor(COL):
+    return QtGui.QColor(COL[0], COL[1], COL[2])
+
+def convert_stat_growth(growth):
+        return round(growth*100)
+
+def convert_growths(growths):
+    # Converts growths from decimal to %
+    converted = Stats(
+        "",
+        "Converted Growths",
+        convert_stat_growth(growths.HP),
+        convert_stat_growth(growths.HP),
+        convert_stat_growth(growths.Mag),
+        convert_stat_growth(growths.Skl),
+        convert_stat_growth(growths.Spd),
+        convert_stat_growth(growths.Lck),
+        convert_stat_growth(growths.Def),
+        convert_stat_growth(growths.Mdf)
+    )
+    return converted
