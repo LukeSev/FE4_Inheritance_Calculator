@@ -22,8 +22,18 @@ from PyQt6.QtGui import QPixmap
 import sys
 from Stat_Calculations import *
 
-LIGHTBLUE = "#b8e0f5"
-LIGHTTAN = "#faf2cd"
+# Window Dimensions
+WIDTH   =   800
+HEIGHT  =   600
+
+# Alignment flags
+LEFT    =   Qt.AlignmentFlag.AlignLeft
+CENTER  =   Qt.AlignmentFlag.AlignCenter
+RIGHT   =   Qt.AlignmentFlag.AlignRight
+
+# Colors for various buttons/fields
+LTBLUE  =   "#b8e0f5"
+LTTAN   =   "#faf2cd"
 
 # For indexing into arrays
 MOTHER  =   0
@@ -54,17 +64,17 @@ class StatForm():
         self.Mdf = QLineEdit()
 
 class Results_Window(QWidget):
-    def __init__(self, son, daughter):
+    def __init__(self, father, son, daughter):
         super().__init__()
         self.setWindowTitle('Results')
-        self.setFixedSize(300, 400)
+        self.setFixedSize(int(0.6*WIDTH), int(0.6*HEIGHT))
         if(daughter == None):
-            self.setFixedSize(150, 400)
+            self.setFixedSize(int(0.4*WIDTH), int(0.6*HEIGHT))
         layout = QHBoxLayout()
-        son_results = create_stat_display(self, son)
+        son_results = create_child_display(self, son, father)
         layout.addLayout(son_results)
         if(daughter != None):
-            daughter_results = create_stat_display(self, daughter)
+            daughter_results = create_child_display(self, daughter, father)
             layout.addLayout(daughter_results)
         self.setLayout(layout)
 
@@ -76,7 +86,7 @@ class FE4_Calc(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle('FE4 Inheritance Calculator')
-        self.setFixedSize(800, 600)
+        self.setFixedSize(WIDTH, HEIGHT)
         self.generalLayout = QVBoxLayout()
         centralWidget = QWidget(self)
         centralWidget.setLayout(self.generalLayout)
@@ -90,7 +100,7 @@ class FE4_Calc(QMainWindow):
         self.forms = [StatForm("Mother", "Parent"), StatForm("Father", "Parent")]
         self.create_forms()
         startBtn = QPushButton("start!")
-        startBtn.setStyleSheet("background-color:{}".format(LIGHTBLUE))
+        startBtn.setStyleSheet("background-color:{}".format(LTBLUE))
         startBtn.clicked.connect(self.calculate_children_stats)
         self.generalLayout.addWidget(startBtn)
         
@@ -103,7 +113,7 @@ class FE4_Calc(QMainWindow):
         qRect.moveCenter(centerPoint)
         self.move(qRect.topLeft())
 
-    def display_error_msg(error_msg):
+    def display_error_msg(self, error_msg):
         msg_box = QMessageBox()
         msg_box.setText(error_msg)
         msg_box.exec()
@@ -138,7 +148,7 @@ class FE4_Calc(QMainWindow):
     def create_mother_dropdown(self):
         motherDropdown = QComboBox()
         motherDropdown.addItem("<Select Mother>")
-        motherDropdown.addItem("Aideen")
+        motherDropdown.addItem("Adeen")
         motherDropdown.addItem("Ayra")
         motherDropdown.addItem("Briggid")
         motherDropdown.addItem("Deirdre")
@@ -177,11 +187,13 @@ class FE4_Calc(QMainWindow):
         formsLayout.addLayout(self.fatherForm)
         self.generalLayout.addLayout(formsLayout)
 
-    def generate_stats(self, form):
-        if(form.Name == "Mother"):
+    def generate_stats(self, form, parent):
+        if(parent == MOTHER):
             name = self.motherDropdown.currentText()
-        else:
+        elif(parent == FATHER):
             name = self.fatherDropdown.currentText()
+        else:
+            print("ERROR GENERATING STATS. NOT MOTHER OR FATHER")
         stats = Stats(
             name, 
             form.Type,
@@ -196,20 +208,22 @@ class FE4_Calc(QMainWindow):
         )
         return (int(form.Lvl.text()), stats)
 
-    def display_results(self, son, daughter):
-        return
-
-
     def calculate_children_stats(self):
         # Generate stats from forms
-        mother_info = self.generate_stats(self.forms[MOTHER])
+        try:
+            mother_info = self.generate_stats(self.forms[MOTHER], MOTHER)
+            father_info = self.generate_stats(self.forms[FATHER], FATHER)
+        except:
+            self.display_error_msg(STAT_ERROR)
+            return
+
         mother_stats = mother_info[STATS]
         if(mother_info[LEVEL] >= 20):
             mother_promoted = 1
         else:
             mother_promoted = 0
 
-        father_info = self.generate_stats(self.forms[FATHER])
+        
         father_stats = father_info[STATS]
         if(father_info[LEVEL] >= 20):
             father_promoted = 1
@@ -248,25 +262,45 @@ class FE4_Calc(QMainWindow):
             daughter = calc_start_stats(daughter_parent[STATS], daughter_parent[PROMO], son_parent[STATS], son_parent[PROMO], children[mother_stats.Name][DGHTR], father_stats.Name)
 
         # Display results
-        if self.results is None:
-            self.results = Results_Window(son, daughter)
+        # if self.results is None:
+        self.results = Results_Window(father_stats.Name, son, daughter)
         self.results.show()
         return 0
 
-def create_stat_label(text):
+def create_label(text, alignment):
         label = QLabel()
         label.setText(text)
+        label.setAlignment(alignment)
         return label
 
-def create_stat_display(self, stats):
-        stat_display = QVBoxLayout()
-        stat_display.addWidget(create_stat_label(str(stats.Name)))
-        stat_display.addWidget(create_stat_label("HP:  {}".format(str(stats.HP))))
-        stat_display.addWidget(create_stat_label("Str: {}".format(str(stats.Str))))
-        stat_display.addWidget(create_stat_label("Mag: {}".format(str(stats.Mag))))
-        stat_display.addWidget(create_stat_label("Skl: {}".format(str(stats.Skl))))
-        stat_display.addWidget(create_stat_label("Spd: {}".format(str(stats.Spd))))
-        stat_display.addWidget(create_stat_label("Lck: {}".format(str(stats.Lck))))
-        stat_display.addWidget(create_stat_label("Def: {}".format(str(stats.Def))))
-        stat_display.addWidget(create_stat_label("Mdf: {}".format(str(stats.Mdf))))
-        return stat_display
+def create_stat_display(self, stats, label):
+    # Create stat display (list of all starting stats)
+    stat_display = QVBoxLayout()
+    stat_display.addWidget(create_label(label, LEFT))
+    stat_display.addWidget(create_label("HP:  {}".format(str(stats.HP)), LEFT))
+    stat_display.addWidget(create_label("Str: {}".format(str(stats.Str)), LEFT))
+    stat_display.addWidget(create_label("Mag: {}".format(str(stats.Mag)), LEFT))
+    stat_display.addWidget(create_label("Skl: {}".format(str(stats.Skl)), LEFT))
+    stat_display.addWidget(create_label("Spd: {}".format(str(stats.Spd)), LEFT))
+    stat_display.addWidget(create_label("Lck: {}".format(str(stats.Lck)), LEFT))
+    stat_display.addWidget(create_label("Def: {}".format(str(stats.Def)), LEFT))
+    stat_display.addWidget(create_label("Mdf: {}".format(str(stats.Mdf)), LEFT))
+    return stat_display
+
+# Create stat display for child's starting stats/growths
+def create_child_display(self, stats, father):
+        child_display = QVBoxLayout()
+
+        # Add portrait Icon and Name of Child
+        portrait = QLabel(self)
+        portrait.setPixmap(QPixmap('Portraits/{}.png'.format(stats.Name)).scaled(int(0.4*WIDTH), int(0.2*HEIGHT), Qt.AspectRatioMode.KeepAspectRatio))
+        portrait.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        child_display.addWidget(portrait)
+        child_display.addWidget(create_label(str(stats.Name), CENTER))
+        
+        # Add stats and growths columns
+        stats_and_growths = QHBoxLayout()
+        stats_and_growths.addLayout(create_stat_display(self, stats, "Stats"))
+        stats_and_growths.addLayout(create_stat_display(self, unit_growths[stats.Name][father], "Growths"))
+        child_display.addLayout(stats_and_growths)
+        return child_display
