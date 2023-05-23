@@ -8,7 +8,11 @@ While there already exist online resources to give you the growth rates and expe
 
 Current Features:
 Given the parents' stats at the end of Gen 1, calculate the child(ren)'s starting stats and growth rates.
+Simple User Interface that lets you select the parents from a list and enter each parent's stats
 
 TODO:
-Add GUI to select parents and input stats
+~~Add GUI to select parents and input stats~~
 Add support for displaying inherited personal skills
+Add support for displaying just stats or just growths
+Make UI look cleaner/more visually appealing
+Bundle into folder/exe using PyInstaller
