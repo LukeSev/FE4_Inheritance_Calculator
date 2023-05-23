@@ -14,8 +14,9 @@ While there already exist online resources to give you the growth rates and expe
 
 # Installation #
 Option 1: Run from exe
-- Download 'dist' directory
-- Navigate to the downloaded directory and run FE4_Inheritance_Calculator.exe  
+- Download FE4_Inheritance_Calculator.zip
+- Unzip and navigate to new directory
+- Run FE4_Inheritance_Calculator.exe  
 
 Option 2: Run as Python Program
 - Download everything but 'dist' directory to the same directory
