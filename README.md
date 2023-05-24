@@ -25,7 +25,7 @@ Option 2: Run as Python Program
 
 # TODO #
 - ~~Add GUI to select parents and input stats~~
-- Add support for displaying inherited personal skills
+- Add support for displaying inherited personal skills (specifically with Icons to indicate all personal skills)
 - ~~Add support for displaying just stats or just growths~~
 - ~~Make UI look cleaner/more visually appealing~~
 - ~~Bundle into folder/exe using PyInstaller~~
