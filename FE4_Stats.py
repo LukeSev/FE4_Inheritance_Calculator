@@ -157,6 +157,32 @@ children = {
 }
 
 starting_levels = {
+    # Gen 1
+    "Sigurd":   5,
+    "Noish":    3,
+    "Alec":     2,
+    "Arden":    3,
+    "Quan":     4,
+    "Ethlyn":   1,
+    "Finn":     1,
+    "Lex":      4,
+    "Azel":     1,
+    "Midir":    2,
+    "Adeen":    3,
+    "Dew":      1,
+    "Ayra":     4,
+    "Deirdre":  3,
+    "Jamke":    6,
+    "Holyn":    12,
+    "Lachesis": 2,
+    "Lewyn":    6,
+    "Sylvia":   1,
+    "Erinys":   6,
+    "Beowolf":  9,
+    "Briggid":  12,
+    "Claude":   20,
+    "Tiltyu":   3,
+    # Gen 2
     "Seliph":   1,
     "Lana":     1,
     "Lester":   1,

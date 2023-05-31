@@ -1,4 +1,5 @@
 from GUI_source import *
+from Music_Player import *
 
 class StatForm():
     def __init__(self, Name, Type):
@@ -85,8 +86,6 @@ class FE4_Calc(QMainWindow):
         self.motherImg = create_image(self, DFLT_MOM_IMG, IMG_WIDTH, IMG_HEIGHT)
         self.fatherImg = create_image(self, DFLT_DAD_IMG, IMG_WIDTH, IMG_HEIGHT)
 
-        # self.generalLayout.addWidget(horizontal_separator(LINE_WIDTH, getColor(SEP_COL)))
-
         # Stat forms
         self.forms = [StatForm("Mother", "Parent"), StatForm("Father", "Parent")]
         self.create_forms()
@@ -108,8 +107,12 @@ class FE4_Calc(QMainWindow):
         bothBtn.clicked.connect(self.calculate_children_stats_growths)
         self.generalLayout.addWidget(bothBtn)
         
+        # Music Player for BGM
+        self.music_player = MusicPlayer(BGM)
+
         self.center()
         self.show()
+        self.music_player.play_BGM(BGM_VOL, BGM_LOOPS)
 
     def center(self):
         qRect = self.frameGeometry()
@@ -155,15 +158,6 @@ class FE4_Calc(QMainWindow):
         formLayout.addRow("Lck:", self.forms[form].Lck)
         formLayout.addRow("Def:", self.forms[form].Def)
         formLayout.addRow("Mdf:", self.forms[form].Mdf)
-        # formLayout.addRow(create_label("Lvl:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Lvl)
-        # formLayout.addRow(create_label("HP:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].HP)
-        # formLayout.addRow(create_label("Str:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Str)
-        # formLayout.addRow(create_label("Mag:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Mag)
-        # formLayout.addRow(create_label("Skl:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Skl)
-        # formLayout.addRow(create_label("Spd:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Spd)
-        # formLayout.addRow(create_label("Lck:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Lck)
-        # formLayout.addRow(create_label("Def:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Def)
-        # formLayout.addRow(create_label("Mdf:", RIGHT, FORM_FONT, FORM_SIZE), self.forms[form].Mdf)
         statForm.addLayout(formLayout)
         return statForm
 
@@ -212,6 +206,27 @@ class FE4_Calc(QMainWindow):
         formsLayout.addLayout(self.fatherForm)
         self.generalLayout.addLayout(formsLayout)
 
+    def fill_form(self, parent, Lvl, stats):
+        # Determine which form to fill out
+        if(parent == "Mother"):
+            form = MOTHER
+        elif(parent == "Father"):
+            form = FATHER
+        else:
+            return      # Error
+        
+        # Fill out form
+        self.forms[form].Lvl.setText(str(Lvl))
+        self.forms[form].HP.setText(str(stats.HP))
+        self.forms[form].Str.setText(str(stats.Str))
+        self.forms[form].Mag.setText(str(stats.Mag))
+        self.forms[form].Skl.setText(str(stats.Skl))
+        self.forms[form].Spd.setText(str(stats.Spd))
+        self.forms[form].Lck.setText(str(stats.Lck))
+        self.forms[form].Def.setText(str(stats.Def))
+        self.forms[form].Mdf.setText(str(stats.Mdf))
+
+
     def generate_stats(self, form, parent):
         if(parent == MOTHER):
             name = self.motherDropdown.currentText()
@@ -240,36 +255,40 @@ class FE4_Calc(QMainWindow):
 
     # Action that occurs in response to pressing "Calculate stats and growths"
     def display_results(self, mode):
-        # Generate stats from forms
-        try:
-            mother_info = self.generate_stats(self.forms[MOTHER], MOTHER)
-            father_info = self.generate_stats(self.forms[FATHER], FATHER)
-        except:
-            self.display_error_msg(STAT_ERROR)
-            return
-
-        mother_stats = mother_info[STATS]
-        if(mother_info[LEVEL] >= 20):
-            mother_promoted = 1
-        else:
-            mother_promoted = 0
-
-        father_stats = father_info[STATS]
-        if(father_info[LEVEL] >= 20):
-            father_promoted = 1
-        else:
-            father_promoted = 0
+        mother = self.motherDropdown.currentText()
+        father = self.fatherDropdown.currentText()
 
         # Check for invalid pairings
-        if( (mother_stats.Name == "Ethlin" and father_stats.Name != "Quan")     or
-            (father_stats.Name == "Quan" and mother_stats.Name != "Ethlin")     or
-            (mother_stats.Name == "Deirdre" and father_stats.Name != "Sigurd")  or
-            (father_stats.Name == "Sigurd" and mother_stats.Name != "Deirdre")  ):  
+        if( (mother == "Ethlin" and father != "Quan")     or
+            (father == "Quan" and mother != "Ethlin")     or
+            (mother == "Deirdre" and father != "Sigurd")  or
+            (father == "Sigurd" and mother != "Deirdre")  ):  
                 self.display_error_msg(PARENT_ERROR)
                 return -1
 
         # Check for valid stat fields if necessary
         if(mode != MODE_GROWTHS):
+
+            # Generate stats from forms
+            try:
+                mother_info = self.generate_stats(self.forms[MOTHER], MOTHER)
+                father_info = self.generate_stats(self.forms[FATHER], FATHER)
+            except:
+                self.display_error_msg(STAT_ERROR)
+                return
+
+            mother_stats = mother_info[STATS]
+            if(mother_info[LEVEL] >= 20):
+                mother_promoted = 1
+            else:
+                mother_promoted = 0
+
+            father_stats = father_info[STATS]
+            if(father_info[LEVEL] >= 20):
+                father_promoted = 1
+            else:
+                father_promoted = 0
+
             if( check_valid_stats(mother_stats, max_stats[unit_classes[mother_stats.Name][mother_promoted]]) == -1   or
                 check_valid_stats(father_stats, max_stats[unit_classes[father_stats.Name][father_promoted]]) == -1   ):
                     self.display_error_msg(STAT_ERROR)
@@ -295,11 +314,11 @@ class FE4_Calc(QMainWindow):
             elif(mode == MODE_STATS):
                 self.results = Stats_Window(father_stats.Name, son, daughter)
         else:   # Growths
-            if(father_stats.Name == "Sigurd"):
+            if(father == "Sigurd"):
                 daughter = None
             else:
-                daughter = children[mother_stats.Name][DGHTR]
-            self.results = Growths_Window(father_stats.Name, children[mother_stats.Name][SON], daughter)
+                daughter = children[mother][DGHTR]
+            self.results = Growths_Window(father, children[mother][SON], daughter)
 
         # Display results
         self.results.show()

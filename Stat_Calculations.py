@@ -94,3 +94,26 @@ def check_valid_stats(stats, max_stats):
         stats.Mdf > max_stats.Mdf   ):
             return -1
     return 0
+
+def calc_avg_stats(unit, lvl):
+    base_lvl = starting_levels[unit]
+    base_stats = base_stats[unit]
+    growths = unit_growths[unit]
+
+    lvl_diff = lvl - base_lvl
+    if(lvl_diff < 1):
+        return base_stats   # If unit hasn't leveled at all, return base stats
+
+    avg_stats = Stats(
+        unit,
+        "avg",
+        base_stats.HP + (lvl_diff*growths.HP),
+        base_stats.Str + (lvl_diff*growths.Str),
+        base_stats.Mag + (lvl_diff*growths.Mag),
+        base_stats.Skl + (lvl_diff*growths.Skl),
+        base_stats.Spd + (lvl_diff*growths.Spd),
+        base_stats.Lck + (lvl_diff*growths.Lck),
+        base_stats.Def + (lvl_diff*growths.Def),
+        base_stats.Mdf + (lvl_diff*growths.Mdf),
+    )
+    return avg_stats

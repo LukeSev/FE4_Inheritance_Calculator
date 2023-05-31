@@ -1,4 +1,6 @@
 # Definitions for various imports/constants to be used by Inheritance_GUI
+
+# Imports
 from PyQt6.QtWidgets import (
     QApplication, 
     QLabel, 
@@ -20,15 +22,26 @@ from PyQt6 import (
     QtGui, 
     QtWidgets
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import (
+    Qt,
+    QUrl
+)
 from PyQt6.QtGui import (
     QPixmap,
     QPalette, 
     QFont
 )
+from PyQt6.QtMultimedia import (
+    QSoundEffect,
+    QMediaPlayer,
+    QAudioOutput
+)
+
 import sys
 from Stat_Calculations import *
 
+
+# Various Constant Definitions
 # Dimensions
 WIDTH       =   800
 HEIGHT      =   800
@@ -61,11 +74,16 @@ COL_WHT     =   (0,0,0)
 # Specific colors for various types of elements
 SEP_COL     =   COL_WHT
 
-# Default Values
+# Image Defaults
 DFLT_MOM        =   'Deirdre'
 DFLT_MOM_IMG    =   'Portraits/{}.png'.format(DFLT_MOM)
 DFLT_DAD        =   'Sigurd'
 DFLT_DAD_IMG    =   'Portraits/{}.png'.format(DFLT_DAD)
+
+# Music Defaults
+BGM             =   'Audio/FE4_OST-Ending_Ballade.mp3'
+BGM_VOL         =   0.3
+BGM_LOOPS       =   -1      # Infinite Loops
 
 # Mode for button event handling
 MODE_STATS      =   0
