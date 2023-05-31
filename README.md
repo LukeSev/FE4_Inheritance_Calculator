@@ -14,7 +14,8 @@ While there already exist online resources to give you the growth rates and expe
 
 # Installation #
 Option 1: Run from exe
-- Download FE4_Inheritance_Calculator.zip
+- Navigate to the "Releases" directory
+- Pick a version and download the corresponding zip
 - Unzip and navigate to new directory
 - Run FE4_Inheritance_Calculator.exe  
 
@@ -24,7 +25,9 @@ Option 2: Run as Python Program
 
 # TODO #
 - ~~Add GUI to select parents and input stats~~
-- Add support for displaying inherited personal skills
+- Add support for displaying inherited personal skills (specifically with Icons to indicate all personal skills)
 - ~~Add support for displaying just stats or just growths~~
 - ~~Make UI look cleaner/more visually appealing~~
 - ~~Bundle into folder/exe using PyInstaller~~
+- Fix Issue where it still checks for valid stats when only looking for growths
+- Add option to calculate children's expected starting stats using parents' expected stats at a given level
