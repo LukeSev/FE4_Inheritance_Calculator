@@ -19,10 +19,10 @@ class Stats:
 # Note: 'Cavalier' referse to Social, Lance, Arch, Axe, and Free Knight, which all have the same base stats
 class_bases = {
     "Junior Lord":      Stats("", "Class", 30, 5, 0, 5, 5, 0, 5, 0),
-    "Lord Knight":      Stats("", "Class", 340, 10, 0, 7, 7, 0, 7, 3),
-    "Sword Armour":     Stats("", "Class", 340, 9, 0, 5, 3, 0, 10, 0),
-    "General":          Stats("", "Class", 340, 10, 0, 6, 5, 0, 12, 3),
-    "Troubadour":       Stats("", "Class", 326, 3, 3, 6, 6, 0, 3, 3),
+    "Lord Knight":      Stats("", "Class", 34, 10, 0, 7, 7, 0, 7, 3),
+    "Sword Armour":     Stats("", "Class", 34, 9, 0, 5, 3, 0, 10, 0),
+    "General":          Stats("", "Class", 34, 10, 0, 6, 5, 0, 12, 3),
+    "Troubadour":       Stats("", "Class", 32, 3, 3, 6, 6, 0, 3, 3),
     "Cavalier":         Stats("", "Class", 30, 7, 0, 6, 6, 0, 6, 0),
     "Paladin":          Stats("", "Class", 40, 9, 5, 9, 9, 0, 9, 5),
     "Duke Knight":      Stats("", "Class", 40, 12, 0, 7, 7, 0, 8, 3),
@@ -52,6 +52,60 @@ class_bases = {
     "Thunder Mage":     Stats("", "Class", 26, 0, 7, 9, 6, 0, 1, 5),
     "Mage Fighter (F)": Stats("", "Class", 26, 3, 12, 9, 12, 0, 5, 10),
     "Dragon Knight":    Stats("", "Class", 40, 10, 0, 7, 6, 0, 11, 0)
+}
+
+promo_bonuses = {
+    ("Cavalier", "Paladin (M)"): Stats("", "Promo", 0, 2, 5, 3, 3, 0, 3, 5),
+    ("Cavalier", "Duke Knight"): Stats("", "Promo", 0, 5, 0, 1, 1, 0, 2, 3),
+    ("Cavalier", "Bow Knight"): Stats("", "Promo", 0, 3, 0, 2, 2, 0, 2, 3),
+    ("Cavalier", "Great Knight"): Stats("", "Promo", 0, 5, 0, 1, 1, 0, 4, 3),
+    ("Cavalier", "Forrest Knight"): Stats("", "Promo", 0, 1, 0, 9, 6, 0, 2, 3),
+    ("Troubadour", "Paladin (F)"): Stats("", "Promo", 0, 6, 2, 3, 3, 0, 6, 2),
+    ("Pegasus Knight","Falcon Knight"): Stats("", "Promo", 0, 0, 7, 3, 3, 0, 1, 5),
+    ("Dragon Knight","Dragon Master"): Stats("", "Promo", 0, 2, 0, 2, 1, 0, 3, 0),
+    ("Bow Fighter","Sniper"): Stats("", "Promo", 0, 5, 0, 2, 2, 0, 2, 3),
+    ("Swordfighter","Forrest"): Stats("", "Promo", 0, 5, 3, 2, 2, 0, 2, 3),
+    ("Swordfighter","Swordmaster"): Stats("", "Promo", 0, 5, 0, 5, 5, 0, 2, 3),
+    ("Sword Armour","General"): Stats("", "Promo", 0, 1, 0, 1, 2, 0, 2, 3),
+    ("Axe Fighter","Warrior"): Stats("", "Promo", 0, 3, 0, 2, 2, 0, 2, 3),
+    ("Junior Lord","Lord Knight"): Stats("", "Promo", 0, 5, 0, 2, 2, 0, 2, 3),
+    ("Prince","Master Knight"): Stats("", "Promo", 0, 4, 4, 5, 6, 0, 5, 4),
+    ("Princess","Master Knight"): Stats("", "Promo", 0, 7, 0, 7, 4, 0, 7, 0),
+    ("Priest","High Priest"): Stats("", "Promo", 0, 0, 5, 3, 2, 0, 2, 1),
+    ("Mage","Mage Knight"): Stats("", "Promo", 0, 5, 3, 1, 1, 0, 4, 2),
+    ("Mage","Mage Fighter (F)"): Stats("", "Promo", 0, 3, 5, 3, 6, 0, 4, 5),
+    ("Thunder Mage","Mage Fighter (F)"): Stats("", "Promo", 0, 3, 5, 0, 6, 0, 4, 5),
+    ("Wind Mage","Mage Fighter (F)"): Stats("", "Promo", 0, 5, 5, 4, 4, 0, 6, 3),
+    ("Bard","Sage"): Stats("", "Promo", 0, 0, 8, 5, 5, 0, 0, 5),
+    ("Shaman","Sage"): Stats("", "Promo", 0, 0, 7, 5, 8, 0, 0, 2),
+    ("Thief","Theif Fighter"): Stats("", "Promo", 0, 4, 3, 4, 5, 0, 4, 3)
+}
+
+unit_bases = {
+    "Sigurd":   Stats("Sigurd", "Bases", 35, 14, 0, 11, 12, 7, 9, 3),
+    "Noish":    Stats("Noish", "Bases", 33, 11, 0, 7, 8, 5, 8, 0),
+    "Alec":     Stats("Alec", "Bases", 32, 9, 0, 9, 10, 4, 7, 0),
+    "Arden":    Stats("Arden", "Bases", 36, 13, 0, 5, 4, 3, 13, 0),
+    "Quan":     Stats("Quan", "Bases", 34, 16, 0, 10, 10, 5, 10, 3),
+    "Ethlin":   Stats("Ethlin", "Bases", 28, 5, 8, 11, 12, 8, 4, 6),
+    "Finn":     Stats("Finn", "Bases", 32, 9, 0, 8, 10, 8, 7, 0),
+    "Lex":      Stats("Lex", "Bases", 33, 10, 0, 10, 11, 8, 9, 0),
+    "Azel":     Stats("Azel", "Bases", 30, 0, 10, 7, 9, 2, 2, 6),
+    "Midir":    Stats("Midir", "Bases", 32, 9, 0, 7, 9, 3, 7, 0),
+    "Adeen":    Stats("Adeen", "Bases", 28, 0, 13, 8, 9, 11, 1, 10),
+    "Dew":      Stats("Dew", "Bases", 28, 3, 0, 6, 15, 12, 1, 0),
+    "Ayra":     Stats("Ayra", "Bases", 32, 11, 0, 16, 17, 3, 7, 1),
+    "Deirdre":  Stats("Deirdre", "Bases", 26, 0, 14, 9, 12, 6, 3, 16),
+    "Jamke":    Stats("Jamke", "Bases", 36, 11, 0, 14, 14, 4, 9, 0),
+    "Holyn":    Stats("Holyn", "Bases", 40, 14, 0, 17, 17, 1, 11, 1),
+    "Lachesis": Stats("Lachesis", "Bases", 26, 6, 8, 9, 13, 5, 7, 9),
+    "Lewyn":    Stats("Lewyn", "Bases", 34, 1, 12, 12, 16, 7, 5, 9),
+    "Sylvia":   Stats("Sylvia", "Bases", 28, 3, 0, 4, 12, 6, 1, 5),
+    "Erinys":   Stats("Erinys", "Bases", 32, 11, 1, 12, 18, 7, 9, 9),
+    "Beowolf":  Stats("Beowolf", "Bases", 38, 14, 0, 11, 11, 3, 10, 0),
+    "Briggid":  Stats("Briggid", "Bases", 40, 20, 0, 22, 21, 7, 14, 9),
+    "Claude":   Stats("Claude", "Bases", 34, 0, 21, 14, 15, 9, 5, 20),
+    "Tiltyu":   Stats("Tiltyu", "Bases", 28, 0, 10, 15, 10, 9, 1, 9)
 }
 
 max_stats = {
@@ -144,6 +198,20 @@ main_mothers = [
     "Briggid"
 ]
 
+# Units who come promoted, usually below promo level
+pre_promotes = [
+    "Sigurd",
+    "Quan",
+    "Deirdre",          # Technically not a pre-promote, but can't promote
+    "Briggid",
+    "Claude",
+    "Oifey",
+    "Shanan",
+    "Hawk",
+    "Hannibal",
+    "Ced"
+]
+
 children = {
     "Deirdre":  ["Seliph", ""],
     "Ethlin":   ["Leif", "Altenna"],
@@ -202,8 +270,35 @@ starting_levels = {
     "Tinny":    3
 }
 
+parent_growths = {
+    "Sigurd": Stats("", "Growths",1.1,0.5,0.05,0.3,0.3,0.4,0.4,0.05),
+    "Noish": Stats("", "Growths",0.8,0.4,0.05,0.3,0.2,0.2,0.4,0.05),
+    "Alec": Stats("", "Growths",0.7,0.3,0.05,0.4,0.3,0.3,0.3, 0.05),
+    "Arden": Stats("", "Growths",0.9,0.5,0.05,0.1,0.2,0.1,0.4,0.05),
+    "Quan": Stats("", "Growths",1.1,0.5,0.05,0.3,0.4,0.1,0.5,0.05),
+    "Ethlin": Stats("", "Growths",0.6,0.3,0.05,0.3,0.3,0.2,0.2,0.1),
+    "Finn": Stats("", "Growths",0.7,0.3,0.05,0.4,0.3,0.5,0.3,0.05),
+    "Lex": Stats("", "Growths",0.9,0.4,0.05,0.2,0.2,0.2,0.5,0.05),
+    "Azel": Stats("", "Growths",0.7,0.1,0.4,0.2,0.5,0.2,0.2,0.1),
+    "Midir": Stats("", "Growths",0.6,0.3,0.05,0.3,0.4,0.1,0.3,0.05),
+    "Adeen": Stats("", "Growths",0.7,0.2,0.3,0.2,0.3,0.6,0.2,0.05),
+    "Dew": Stats("", "Growths",0.5,0.4,0.1,0.4,0.4,0.4,0.4,0.1),
+    "Ayra": Stats("", "Growths",0.7,0.3,0.05,0.6,0.3,0.2,0.2,0.05),
+    "Deirdre": Stats("", "Growths",0.7,0.1,0.7,0.2,0.1,0.1,0.1,0.7),
+    "Jamke": Stats("", "Growths",0.9,0.5,0,0.1,0.3,0.4,0.3,0.05),
+    "Holyn": Stats("", "Growths",1.1,0.3,0.05,0.8,0.3,0.2,0.3,0.05),
+    "Lachesis": Stats("", "Growths",0.6,0.5,0.05,0.1,0.2,0.4,0.2,0.1),
+    "Lewyn": Stats("", "Growths",0.9,0.1,0.3,0.4,0.9,0.2,0.2,0.1),
+    "Sylvia": Stats("", "Growths",0.5,0.1,0.3,0.1,0.1,0.3,0.1,0.4),
+    "Erinys": Stats("", "Growths",0.5,0.2,0.1,0.2,0.3,0.2,0.3,0.1),
+    "Beowolf": Stats("", "Growths",0.8,0.4,0,0.4,0.3,0.2,0.3,0.05),
+    "Briggid": Stats("", "Growths",0.9,0.3,0.2,0.3,0.2,0.7,0.2,0.05),
+    "Claude": Stats("", "Growths",0.7,0.1,0.4,0.2,0.3,0.5,0.2,0.5),
+    "Tiltyu": Stats("", "Growths",0.6,0.1,0.2,0.6,0.4,0.5,0.1,0.1),
+}
+
 # Note: Growth Rates for each Father
-unit_growths = {
+child_growths = {
     "Seliph":   {
         "Sigurd": Stats("", "Growths", 1.40, 0.55, 0.3, 0.6, 0.35, 0.45, 0.45, 0.30)
         },

@@ -16,7 +16,10 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QComboBox,
     QFrame,
-    QSizePolicy
+    QSizePolicy,
+    QDialog,
+    QDialogButtonBox,
+    QSpacerItem
 )
 from PyQt6 import (
     QtGui, 
@@ -24,7 +27,8 @@ from PyQt6 import (
 )
 from PyQt6.QtCore import (
     Qt,
-    QUrl
+    QUrl,
+    QTimer
 )
 from PyQt6.QtGui import (
     QPixmap,
@@ -37,14 +41,14 @@ from PyQt6.QtMultimedia import (
     QAudioOutput
 )
 
-import sys
+import sys, time
 from Stat_Calculations import *
 
 
 # Various Constant Definitions
 # Dimensions
 WIDTH       =   800
-HEIGHT      =   800
+HEIGHT      =   900
 LINE_WIDTH  =   1
 IMG_WIDTH   =   int(0.4*WIDTH)
 IMG_HEIGHT  =   int(0.25*HEIGHT)
@@ -101,5 +105,20 @@ STATS   =   1
 SON     =   0
 DGHTR   =   1
 
-PARENT_ERROR = "ERROR: Invalid Parent Combination"
-STAT_ERROR = "ERROR: Invalid Stat Selection(s)"
+# Misc Constants
+DELAY   =   750     # ms
+
+# Error Messages
+PARENT_ERROR    =   "ERROR: Invalid Parent Combination"
+STAT_ERROR      =   "ERROR: Invalid Stat Selection(s)"
+LVL_ERROR       =   "ERROR: Invalid Lvl Selction(s)"
+
+# Dialog Messages
+WELCOME         =   """ Welcome to the FE4 Inheritance Calculator!
+This program lets you calculate the starting stats of the children for any (valid) pairing in FE4! 
+You can either manually input your units' stats or use their average stats at a given level. 
+You can also choose to just view the Growth Rates for the child(ren) if you want. 
+I hope you enjoy!"""
+
+LVL_PROMPT      =   "Enter Level for which average stats will be calculated"
+AVG_STAT_BTN    =   "Calculate Average Stats"

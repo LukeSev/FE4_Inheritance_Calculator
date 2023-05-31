@@ -47,7 +47,7 @@ def calc_PAR_adds(parent, base_class):
 # Calculates all child additions and returns them in stat struct
 def calc_CHLD_adds(child, father):
     level = starting_levels[child]
-    growths = unit_growths[child][father]
+    growths = child_growths[child][father]
     HP = CHLD_HP_add(starting_levels[child], growths.HP)
     Str = CHLD_stat_add(level, growths.Str)
     Mag = CHLD_stat_add(level, growths.Mag)
@@ -95,25 +95,36 @@ def check_valid_stats(stats, max_stats):
             return -1
     return 0
 
-def calc_avg_stats(unit, lvl):
+def calc_avg_stats_par(unit, lvl):
+    if(lvl >= 20):
+        promoted = 1
+    else:
+        promoted = 0
     base_lvl = starting_levels[unit]
-    base_stats = base_stats[unit]
-    growths = unit_growths[unit]
+    base_stats = unit_bases[unit]
+    stat_caps = max_stats[unit_classes[unit][promoted]]
+    growths = parent_growths[unit]
 
     lvl_diff = lvl - base_lvl
     if(lvl_diff < 1):
         return base_stats   # If unit hasn't leveled at all, return base stats
 
+    # Determine if unit promotes and needs promo bonuses
+    if((lvl >= 20) and (unit not in pre_promotes)):
+        promo_bonus = promo_bonuses[(unit_classes[unit])]
+    else:
+        promo_bonus = Stats("", "Promo", 0, 0, 0, 0, 0, 0, 0, 0)
+
     avg_stats = Stats(
         unit,
         "avg",
-        base_stats.HP + (lvl_diff*growths.HP),
-        base_stats.Str + (lvl_diff*growths.Str),
-        base_stats.Mag + (lvl_diff*growths.Mag),
-        base_stats.Skl + (lvl_diff*growths.Skl),
-        base_stats.Spd + (lvl_diff*growths.Spd),
-        base_stats.Lck + (lvl_diff*growths.Lck),
-        base_stats.Def + (lvl_diff*growths.Def),
-        base_stats.Mdf + (lvl_diff*growths.Mdf),
+        min(base_stats.HP + (lvl_diff*growths.HP) + promo_bonus.HP, stat_caps.HP),
+        min(base_stats.Str + (lvl_diff*growths.Str) + promo_bonus.Str, stat_caps.Str),
+        min(base_stats.Mag + (lvl_diff*growths.Mag) + promo_bonus.Mag, stat_caps.Mag),
+        min(base_stats.Skl + (lvl_diff*growths.Skl) + promo_bonus.Skl, stat_caps.Skl),
+        min(base_stats.Spd + (lvl_diff*growths.Spd) + promo_bonus.Spd, stat_caps.Spd),
+        min(base_stats.Lck + (lvl_diff*growths.Lck) + promo_bonus.Lck, stat_caps.Lck),
+        min(base_stats.Def + (lvl_diff*growths.Def) + promo_bonus.Def, stat_caps.Def),
+        min(base_stats.Mdf + (lvl_diff*growths.Mdf) + promo_bonus.Mdf, stat_caps.Mdf),
     )
     return avg_stats

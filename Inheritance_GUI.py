@@ -63,11 +63,58 @@ class Growths_Window(QWidget):
             layout.addLayout(daughter_results, 10)
         self.setLayout(layout)
 
+class Welcome_Dialog(QDialog):
+    def __init__(self, welcome_msg):
+        super().__init__()
+        layout = QGridLayout()
+
+        # Create welcome message
+        self.label = QLabel()
+        self.label.setText(welcome_msg)
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(self.label, 0, 0, 1, 4)
+
+        # Create confirmation button
+        startBtn = QPushButton("Get Started")
+        startBtn.clicked.connect(self.close)
+        layout.addWidget(startBtn, 1, 1, 1, 2)
+
+        self.setLayout(layout)
+        self.setWindowTitle("Welcome")
+
+class InputDialog(QDialog):
+    def __init__(self, prompt, btn_lbl):
+        super().__init__()
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(prompt))
+        self.Lvl = QLineEdit()
+        form = QFormLayout()
+        form.addRow("", self.Lvl)
+        layout.addLayout(form)
+        confirmBtn = QPushButton(btn_lbl)
+        confirmBtn.clicked.connect(self.checkLvl)
+        layout.addWidget(confirmBtn)
+        self.setLayout(layout)
+        self.exec()
+    
+    def checkLvl(self):
+        try:
+            level = int(self.Lvl.text())
+        except:
+            display_error_msg(LVL_ERROR)
+            return
+        if((level < 0) or (level > 30)):
+            display_error_msg(LVL_ERROR)
+        else:
+            self.close()
+
 class FE4_Calc(QMainWindow):
     def __init__(self):
         super().__init__()
         self.results = None
         self.initUI()
+        self.welcome_dlg = Welcome_Dialog(WELCOME)
+        self.initTimer()
 
     def initUI(self):
         # Initialize window and basic layout
@@ -80,8 +127,8 @@ class FE4_Calc(QMainWindow):
 
         logo = QLabel(self)
         logo.setPixmap(QPixmap('FE4_Logo.png'))
-        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.generalLayout.addWidget(logo)
+        logo.setAlignment(CENTER)
+        self.generalLayout.addWidget(logo, 10)
 
         self.motherImg = create_image(self, DFLT_MOM_IMG, IMG_WIDTH, IMG_HEIGHT)
         self.fatherImg = create_image(self, DFLT_DAD_IMG, IMG_WIDTH, IMG_HEIGHT)
@@ -89,6 +136,9 @@ class FE4_Calc(QMainWindow):
         # Stat forms
         self.forms = [StatForm("Mother", "Parent"), StatForm("Father", "Parent")]
         self.create_forms()
+
+        # Horizontal Separator
+        self.generalLayout.addWidget(horizontal_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
 
         # Buttons for each mode
         soloBtns = QHBoxLayout()
@@ -100,7 +150,7 @@ class FE4_Calc(QMainWindow):
         growthsBtn.setStyleSheet("background-color:{}".format(LTBLUE))
         growthsBtn.clicked.connect(self.calculate_children_growths)
         soloBtns.addWidget(growthsBtn)
-        self.generalLayout.addLayout(soloBtns)
+        self.generalLayout.addLayout(soloBtns, 10)
 
         bothBtn = QPushButton("stats and growths")
         bothBtn.setStyleSheet("background-color:{}".format(LTBLUE))
@@ -114,16 +164,15 @@ class FE4_Calc(QMainWindow):
         self.show()
         self.music_player.play_BGM(BGM_VOL, BGM_LOOPS)
 
+    def initTimer(self):
+        # Creates single-shot delay for welcome message
+        QTimer.singleShot(DELAY, self.welcome_dlg.exec)
+
     def center(self):
         qRect = self.frameGeometry()
         centerPoint = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
         qRect.moveCenter(centerPoint)
         self.move(qRect.topLeft())
-
-    def display_error_msg(self, error_msg):
-        msg_box = QMessageBox()
-        msg_box.setText(error_msg)
-        msg_box.exec()
 
     def create_stat_form(self, title):
         statForm = QVBoxLayout()
@@ -139,12 +188,18 @@ class FE4_Calc(QMainWindow):
             statForm.addWidget(label)
             self.motherDropdown = self.create_mother_dropdown()
             statForm.addWidget(self.motherDropdown)
+            self.avg_stat_btns[MOTHER].setStyleSheet("background-color:{}".format(LTBLUE))
+            self.avg_stat_btns[MOTHER].clicked.connect(self.fill_avg_stats_mother)
+            statForm.addWidget(self.avg_stat_btns[MOTHER])
             form = MOTHER
         else:
             statForm.addWidget(self.fatherImg)
             statForm.addWidget(label)
             self.fatherDropdown = self.create_father_dropdown()
             statForm.addWidget(self.fatherDropdown)
+            self.avg_stat_btns[FATHER].setStyleSheet("background-color:{}".format(LTBLUE))
+            self.avg_stat_btns[FATHER].clicked.connect(self.fill_avg_stats_father)
+            statForm.addWidget(self.avg_stat_btns[FATHER])
             form = FATHER
 
         # Create form form parent stats
@@ -195,16 +250,21 @@ class FE4_Calc(QMainWindow):
         fatherDropdown.addItem("Sigurd")
         fatherDropdown.setCurrentIndex(14)
         fatherDropdown.currentTextChanged.connect(self.update_parent_imgs)
-        return fatherDropdown
+        return fatherDropdown       
 
     def create_forms(self):
         formsLayout = QHBoxLayout()
+
+        # Create average stat buttons
+        self.avg_stat_btns = [QPushButton("Use Average Stats"), QPushButton("Use Average Stats")]
+
+        # Create stat forms
         self.motherForm = self.create_stat_form("Mother")
         self.fatherForm = self.create_stat_form("Father")
         formsLayout.addLayout(self.motherForm)
         formsLayout.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)))
         formsLayout.addLayout(self.fatherForm)
-        self.generalLayout.addLayout(formsLayout)
+        self.generalLayout.addLayout(formsLayout, 10)
 
     def fill_form(self, parent, Lvl, stats):
         # Determine which form to fill out
@@ -226,7 +286,6 @@ class FE4_Calc(QMainWindow):
         self.forms[form].Def.setText(str(stats.Def))
         self.forms[form].Mdf.setText(str(stats.Mdf))
 
-
     def generate_stats(self, form, parent):
         if(parent == MOTHER):
             name = self.motherDropdown.currentText()
@@ -237,14 +296,14 @@ class FE4_Calc(QMainWindow):
         stats = Stats(
             name, 
             form.Type,
-            int(form.HP.text()),
-            int(form.Str.text()),
-            int(form.Mag.text()),
-            int(form.Skl.text()),
-            int(form.Spd.text()),
-            int(form.Lck.text()),
-            int(form.Def.text()),
-            int(form.Mdf.text())
+            float(form.HP.text()),
+            float(form.Str.text()),
+            float(form.Mag.text()),
+            float(form.Skl.text()),
+            float(form.Spd.text()),
+            float(form.Lck.text()),
+            float(form.Def.text()),
+            float(form.Mdf.text())
         )
         return (int(form.Lvl.text()), stats)
 
@@ -252,6 +311,7 @@ class FE4_Calc(QMainWindow):
     def update_parent_imgs(self):
         self.motherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.motherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
         self.fatherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.fatherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+
 
     # Action that occurs in response to pressing "Calculate stats and growths"
     def display_results(self, mode):
@@ -263,7 +323,7 @@ class FE4_Calc(QMainWindow):
             (father == "Quan" and mother != "Ethlin")     or
             (mother == "Deirdre" and father != "Sigurd")  or
             (father == "Sigurd" and mother != "Deirdre")  ):  
-                self.display_error_msg(PARENT_ERROR)
+                display_error_msg(PARENT_ERROR)
                 return -1
 
         # Check for valid stat fields if necessary
@@ -274,7 +334,7 @@ class FE4_Calc(QMainWindow):
                 mother_info = self.generate_stats(self.forms[MOTHER], MOTHER)
                 father_info = self.generate_stats(self.forms[FATHER], FATHER)
             except:
-                self.display_error_msg(STAT_ERROR)
+                display_error_msg(STAT_ERROR)
                 return
 
             mother_stats = mother_info[STATS]
@@ -291,7 +351,7 @@ class FE4_Calc(QMainWindow):
 
             if( check_valid_stats(mother_stats, max_stats[unit_classes[mother_stats.Name][mother_promoted]]) == -1   or
                 check_valid_stats(father_stats, max_stats[unit_classes[father_stats.Name][father_promoted]]) == -1   ):
-                    self.display_error_msg(STAT_ERROR)
+                    display_error_msg(STAT_ERROR)
                     return -1
 
             # Account for the mothers that reverse inheritance role
@@ -332,6 +392,38 @@ class FE4_Calc(QMainWindow):
     
     def calculate_children_growths(self):
         self.display_results(MODE_GROWTHS)
+
+    # Action that occurs in response to pressing "Use Average Stats"
+    def fill_avg_stats(self, parent):
+        dlg = InputDialog(LVL_PROMPT, AVG_STAT_BTN)
+        try:
+            level = int(dlg.Lvl.text())
+        except:
+            return
+        if(parent == MOTHER):
+            unit = self.motherDropdown.currentText()
+            form = self.forms[MOTHER]
+        else:
+            unit = self.fatherDropdown.currentText()
+            form = self.forms[FATHER]
+        
+        # Calculate average stats and fill out corresponding form
+        avg_stats = calc_avg_stats_par(unit, level)
+        form.Lvl.setText(str(level))
+        form.HP.setText(str(round(avg_stats.HP, 1)))
+        form.Str.setText(str(round(avg_stats.Str, 1)))
+        form.Mag.setText(str(round(avg_stats.Mag, 1)))
+        form.Skl.setText(str(round(avg_stats.Skl, 1)))
+        form.Spd.setText(str(round(avg_stats.Spd, 1)))
+        form.Lck.setText(str(round(avg_stats.Lck, 1)))
+        form.Def.setText(str(round(avg_stats.Def, 1)))
+        form.Mdf.setText(str(round(avg_stats.Mdf, 1)))
+
+    def fill_avg_stats_mother(self):
+        self.fill_avg_stats(MOTHER)
+
+    def fill_avg_stats_father(self):
+        self.fill_avg_stats(FATHER)
 
 def create_label(text, alignment, font, size):
     label = QLabel()
@@ -394,7 +486,7 @@ def create_child_display(self, stats, father):
     stats_and_growths = QHBoxLayout()
     stats_and_growths.addLayout(create_stat_display(self, stats, "Stats"), 10)
     stats_and_growths.addWidget(vertical_separator(LINE_WIDTH, getColor(SEP_COL)), 1)
-    stats_and_growths.addLayout(create_stat_display(self, convert_growths(unit_growths[stats.Name][father]), "Growths"), 10)
+    stats_and_growths.addLayout(create_stat_display(self, convert_growths(child_growths[stats.Name][father]), "Growths"), 10)
     child_display.addLayout(stats_and_growths)
     return child_display
 
@@ -418,7 +510,7 @@ def create_child_growths_display(self, child, father):
     child_display.addWidget(create_label(child, CENTER, TITLE_FONT, TITLE_SIZE))
     
     # Add stats and growths columns
-    growths_display = create_stat_display(self, convert_growths(unit_growths[child][father]), "Growths")
+    growths_display = create_stat_display(self, convert_growths(child_growths[child][father]), "Growths")
     child_display.addLayout(growths_display)
     return child_display
 
@@ -463,3 +555,8 @@ def convert_growths(growths):
         convert_stat_growth(growths.Mdf)
     )
     return converted
+
+def display_error_msg(error_msg):
+        msg_box = QMessageBox()
+        msg_box.setText(error_msg)
+        msg_box.exec()
