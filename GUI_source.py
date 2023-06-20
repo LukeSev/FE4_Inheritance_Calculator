@@ -80,9 +80,9 @@ SEP_COL     =   COL_WHT
 
 # Image Defaults
 DFLT_MOM        =   'Deirdre'
-DFLT_MOM_IMG    =   'Portraits/{}.png'.format(DFLT_MOM)
+DFLT_MOM_IMG    =   'Images/Portraits/{}.png'.format(DFLT_MOM)
 DFLT_DAD        =   'Sigurd'
-DFLT_DAD_IMG    =   'Portraits/{}.png'.format(DFLT_DAD)
+DFLT_DAD_IMG    =   'Images/Portraits/{}.png'.format(DFLT_DAD)
 
 # Music Defaults
 BGM             =   'Audio/FE4_OST-Ending_Ballade.mp3'

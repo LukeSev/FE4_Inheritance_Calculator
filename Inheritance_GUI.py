@@ -126,7 +126,7 @@ class FE4_Calc(QMainWindow):
         self.setCentralWidget(centralWidget)
 
         logo = QLabel(self)
-        logo.setPixmap(QPixmap('FE4_Logo.png'))
+        logo.setPixmap(QPixmap('Images/FE4_Logo.png'))
         logo.setAlignment(CENTER)
         self.generalLayout.addWidget(logo, 10)
 
@@ -309,8 +309,8 @@ class FE4_Calc(QMainWindow):
 
     # Update image of parent when you select new dropdown option
     def update_parent_imgs(self):
-        self.motherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.motherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
-        self.fatherImg.setPixmap(QPixmap('Portraits/{}.png'.format(self.fatherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+        self.motherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(self.motherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+        self.fatherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(self.fatherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
 
 
     # Action that occurs in response to pressing "Calculate stats and growths"
@@ -479,7 +479,7 @@ def create_child_display(self, stats, father):
 
     # Add portrait Icon and Name of Child
     
-    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_image(self, 'Images/Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
     child_display.addWidget(create_label(str(stats.Name), CENTER, TITLE_FONT, TITLE_SIZE))
     
     # Add stats and growths columns
@@ -494,7 +494,7 @@ def create_child_stat_display(self, stats, father):
     child_display = QVBoxLayout()
 
     # Add portrait Icon and Name of Child
-    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_image(self, 'Images/Portraits/{}.png'.format(stats.Name), IMG_WIDTH, IMG_HEIGHT))
     child_display.addWidget(create_label(str(stats.Name), CENTER, TITLE_FONT, TITLE_SIZE))
     
     # Add stats and growths columns
@@ -506,7 +506,7 @@ def create_child_growths_display(self, child, father):
     child_display = QVBoxLayout()
 
     # Add portrait Icon and Name of Child
-    child_display.addWidget(create_image(self, 'Portraits/{}.png'.format(child), IMG_WIDTH, IMG_HEIGHT))
+    child_display.addWidget(create_image(self, 'Images/Portraits/{}.png'.format(child), IMG_WIDTH, IMG_HEIGHT))
     child_display.addWidget(create_label(child, CENTER, TITLE_FONT, TITLE_SIZE))
     
     # Add stats and growths columns
