@@ -31,4 +31,4 @@ Option 2: Run as Python Program
 - ~~Bundle into folder/exe using PyInstaller~~
 - ~~Fix Issue where it still checks for valid stats when only looking for growths~~
 - ~~Add option to calculate children's expected starting stats using parents' expected stats at a given level~~
-- Reset stat forms/boxes every time you select a new parent
+- ~~Reset stat forms/boxes every time you select a new parent~~

@@ -111,7 +111,7 @@ DELAY   =   750     # ms
 # Error Messages
 PARENT_ERROR    =   "ERROR: Invalid Parent Combination"
 STAT_ERROR      =   "ERROR: Invalid Stat Selection(s)"
-LVL_ERROR       =   "ERROR: Invalid Lvl Selction(s)"
+LVL_ERROR       =   "ERROR: Invalid Level Selection(s)"
 
 # Dialog Messages
 WELCOME         =   """ Welcome to the FE4 Inheritance Calculator!

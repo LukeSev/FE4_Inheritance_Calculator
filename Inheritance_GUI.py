@@ -228,7 +228,7 @@ class FE4_Calc(QMainWindow):
         motherDropdown.addItem("Sylvia")
         motherDropdown.addItem("Tiltyu")
         motherDropdown.setCurrentIndex(3)
-        motherDropdown.currentTextChanged.connect(self.update_parent_imgs)
+        motherDropdown.currentTextChanged.connect(self.update_mother_info)
         return motherDropdown
 
     def create_father_dropdown(self):
@@ -249,7 +249,7 @@ class FE4_Calc(QMainWindow):
         fatherDropdown.addItem("Quan")
         fatherDropdown.addItem("Sigurd")
         fatherDropdown.setCurrentIndex(14)
-        fatherDropdown.currentTextChanged.connect(self.update_parent_imgs)
+        fatherDropdown.currentTextChanged.connect(self.update_father_info)
         return fatherDropdown       
 
     def create_forms(self):
@@ -308,10 +308,15 @@ class FE4_Calc(QMainWindow):
         return (int(form.Lvl.text()), stats)
 
     # Update image of parent when you select new dropdown option
-    def update_parent_imgs(self):
-        self.motherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(self.motherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
-        self.fatherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(self.fatherDropdown.currentText())).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+    def update_father_info(self):
+        father = self.fatherDropdown.currentText()
+        self.fatherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(father)).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+        self.reset_stat_form(self.forms[FATHER])
 
+    def update_mother_info(self):
+        mother = self.motherDropdown.currentText()
+        self.motherImg.setPixmap(QPixmap('Images/Portraits/{}.png'.format(mother)).scaled(IMG_WIDTH, IMG_HEIGHT, Qt.AspectRatioMode.KeepAspectRatio))
+        self.reset_stat_form(self.forms[MOTHER])
 
     # Action that occurs in response to pressing "Calculate stats and growths"
     def display_results(self, mode):
@@ -392,6 +397,17 @@ class FE4_Calc(QMainWindow):
     
     def calculate_children_growths(self):
         self.display_results(MODE_GROWTHS)
+
+    def reset_stat_form(self, form):
+        form.Lvl.setText("")
+        form.HP.setText("")
+        form.Str.setText("")
+        form.Mag.setText("")
+        form.Skl.setText("")
+        form.Spd.setText("")
+        form.Lck.setText("")
+        form.Def.setText("")
+        form.Mdf.setText("")
 
     # Action that occurs in response to pressing "Use Average Stats"
     def fill_avg_stats(self, parent):
