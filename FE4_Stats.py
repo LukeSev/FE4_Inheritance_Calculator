@@ -34,7 +34,7 @@ class_bases = {
     "Priest":           Stats("", "Class", 26, 0, 7, 6, 6, 0, 1, 7),
     "High Priest":      Stats("", "Class", 35, 0, 12, 9, 8, 0, 3, 8),
     "Thief":            Stats("", "Class", 26, 3, 0, 3, 7, 0, 1, 0),
-    "Thief Figher":     Stats("", "Class", 30, 7, 3, 7, 12, 0, 5, 3),
+    "Thief Fighter":     Stats("", "Class", 30, 7, 3, 7, 12, 0, 5, 3),
     "Swordfighter":     Stats("", "Class", 30, 7, 0, 10, 10, 0, 5, 0),
     "Swordmaster":      Stats("", "Class", 40, 12, 0, 15, 15, 0, 7, 3),
     "Forrest":          Stats("", "Class", 40, 12, 3, 12, 12, 0, 7, 3),
@@ -78,7 +78,7 @@ promo_bonuses = {
     ("Wind Mage","Mage Fighter (F)"): Stats("", "Promo", 0, 5, 5, 4, 4, 0, 6, 3),
     ("Bard","Sage"): Stats("", "Promo", 0, 0, 8, 5, 5, 0, 0, 5),
     ("Shaman","Sage"): Stats("", "Promo", 0, 0, 7, 5, 8, 0, 0, 2),
-    ("Thief","Theif Fighter"): Stats("", "Promo", 0, 4, 3, 4, 5, 0, 4, 3)
+    ("Thief","Thief Fighter"): Stats("", "Promo", 0, 4, 3, 4, 5, 0, 4, 3)
 }
 
 unit_bases = {
@@ -125,7 +125,7 @@ max_stats = {
     "Priest":           Stats("Max", "Class", 80, 15, 22, 21, 21, 30, 16, 22),
     "High Priest":      Stats("Max", "Class", 80, 15, 27, 24, 23, 30, 18, 23),
     "Thief":            Stats("Max", "Class", 80, 18, 15, 18, 22, 30, 16, 15),
-    "Thief Figher":     Stats("Max", "Class", 80, 22, 18, 22, 27, 30, 20, 18),
+    "Thief Fighter":    Stats("Max", "Class", 80, 22, 18, 22, 27, 30, 20, 18),
     "Swordfighter":     Stats("Max", "Class", 80, 22, 15, 25, 25, 30, 20, 15),
     "Swordmaster":      Stats("Max", "Class", 80, 27, 15, 30, 30, 30, 22, 18),
     "Forrest":          Stats("Max", "Class", 80, 27, 18, 27, 27, 30, 22, 18),

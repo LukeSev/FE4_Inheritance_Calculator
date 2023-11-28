@@ -465,16 +465,35 @@ def create_stat_display(self, stats, label):
     lbl_display.addWidget(create_label("Def:", LEFT, LBL_FONT, LBL_SIZE))
     lbl_display.addWidget(create_label("Mdf:", LEFT, LBL_FONT, LBL_SIZE))
 
+    if(label == "Growths"):
+        hp_lbl = str(stats.HP) + "%"
+        str_lbl = str(stats.Str) + "%"
+        mag_lbl = str(stats.Mag) + "%"
+        skl_lbl = str(stats.Skl) + "%"
+        spd_lbl = str(stats.Spd) + "%"
+        lck_lbl = str(stats.Lck) + "%"
+        def_lbl = str(stats.Def) + "%"
+        mdf_lbl = str(stats.Mdf) + "%"
+    else:
+        hp_lbl = str(stats.HP)
+        str_lbl = str(stats.Str)
+        mag_lbl = str(stats.Mag)
+        skl_lbl = str(stats.Skl)
+        spd_lbl = str(stats.Spd)
+        lck_lbl = str(stats.Lck)
+        def_lbl = str(stats.Def)
+        mdf_lbl = str(stats.Mdf)
+
     # Create corresponding value for each stat (second column)
     val_display = QVBoxLayout()
-    val_display.addWidget(create_label(str(stats.HP), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Str), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Mag), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Skl), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Spd), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Lck), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Def), RIGHT, LBL_FONT, LBL_SIZE))
-    val_display.addWidget(create_label(str(stats.Mdf), RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(hp_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(str_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(mag_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(skl_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(spd_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(lck_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(def_lbl, RIGHT, LBL_FONT, LBL_SIZE))
+    val_display.addWidget(create_label(mdf_lbl, RIGHT, LBL_FONT, LBL_SIZE))
     
     # Add both columns to display
     columns.addLayout(lbl_display)
